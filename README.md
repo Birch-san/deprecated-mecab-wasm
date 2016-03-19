@@ -86,3 +86,24 @@ EOS
 ### mecab-wasm
 
 Now we can start thinking about WebAssembling.
+
+#### What you'll need
+
+##### Alternative MeCab source
+
+Clone this repository; there are changes to (for example) MeCab's `configure` script.
+
+```bash
+git clone https://github.com/Birch-san/mecab-wasm.git
+```
+
+##### Up-to-date `llc` (LLVM static compiler)
+
+The WebAssembly backend to LLVM is pretty new, so I assume we need to update LLVM.
+
+```bash
+brew install llvm
+```
+
+Apparently I got `llvm-3.6.2.el_capitan.bottle.1.tar.gz`.
+
