@@ -184,7 +184,7 @@ Get the Emscripten env variables into your shell:
 
 ```bash
 # Emscripten SDK is on your PATH now, right?
-$(dirname $(which emsdk))/emsdk_env.sh
+. $(dirname $(which emsdk))/emsdk_env.sh
 ```
 
 Use Emscripten toolchain to invoke `./configure`
