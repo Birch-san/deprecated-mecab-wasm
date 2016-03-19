@@ -283,3 +283,34 @@ And there should also be some LLVM intermediate code in:
 ```
 src/.libs
 ```
+
+Specifically, you will have these in `src/.libs`:
+
+```
+libmecab.2.dylib
+libmecab.a
+libmecab.dylib -> libmecab.2.dylib
+libmecab.la -> ../libmecab.la
+libmecab.lai
+libmecab.o
+mecab
+mecab-cost-train
+mecab-dict-gen
+mecab-dict-index
+mecab-system-eval
+mecab-test-gen
+char_property.o, connector.o, context_id.o, dictionary.o, dictionary_compiler.o, dictionary_generator.o, dictionary_rewriter.o, eval.o, feature_index.o, iconv_utils.o, lbfgs.o, learner.o, learner_tagger.o, nbest_generator.o, param.o, string_buffer.o, tagger.o, tokenizer.o, utils.o, viterbi.o, writer.o
+```
+
+The `.dylib` is Mac-specific. Maybe a Linux user would get `.so`.
+
+Apparently we need to rename the MeCab LLVM intermediate representation (IR) so that Emscripten knows what to do with it:
+
+```bash
+# rename mecab LLVM IR
+cp src/.libs/mecab src/.libs/mecab.bc
+# copy default mecabrc into src/.libs
+cp /usr/local/etc/mecabrc src/.libs
+# ask your existing mecab executable where ipadic lives, and copy that folder into src/.libs
+cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) src/.libs
+```
