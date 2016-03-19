@@ -172,8 +172,23 @@ Add the Emscripten SDK to your `PATH` (for example in your `.bashrc`):
 export PATH="$HOME/Documents/emsdk_portable:$PATH"
 ```
 
-You can now setup your Emscripten env variables in any shell, by running:
+##### Start compilin'
+
+Navigate to the `MeCab` src included in this repository
 
 ```bash
-emsdk_env.sh
+cd ~/git/mecab-wasm/mecab-0.996
+```
+
+Get the Emscripten env variables into your shell:
+
+```bash
+# Emscripten SDK is on your PATH now, right?
+$(dirname $(which emsdk))/emsdk_env.sh
+```
+
+Use Emscripten toolchain to invoke `./configure`
+
+```bash
+emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1" CFLAGS="-O1"
 ```
