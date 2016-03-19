@@ -97,34 +97,6 @@ Clone this repository; it include's (for example) fasiha's changes to MeCab's `c
 git clone https://github.com/Birch-san/mecab-wasm.git
 ```
 
-##### Binaryen
-
-[Binaryen](https://github.com/WebAssembly/binaryen) is a compiler infrastructure and toolchain library which (crucially) includes a WebAssembly backend for our compiler.
-
-###### Install Binaryen
-
-**Get source**
-
-Clone Binaryen's GitHub repository:
-
-```bash
-git clone https://github.com/WebAssembly/binaryen.git
-```
-
-**Build source**
-
-Run `update.py` to initialize git submodules and fetch test files.
-
-```bash
-python2 update.py
-```
-
-Make
-
-```bash
-cmake . && make
-```
-
 ##### Emscripten
 
 We're gonna use [Emscripten](https://github.com/kripken/emscripten) as our compiler.
@@ -206,11 +178,52 @@ Open a new command-line shell.
 emsdk activate emscripten-incoming-64bit clang-incoming-64bit
 ```
 
-Also edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that you compiled.
+##### Binaryen
+
+[Binaryen](https://github.com/WebAssembly/binaryen) is a compiler infrastructure and toolchain library which (crucially) includes a WebAssembly backend for our compiler.
+
+###### Install Binaryen
+
+**Get source**
+
+Clone Binaryen's GitHub repository:
+
+```bash
+git clone https://github.com/WebAssembly/binaryen.git
+```
+
+**Build source**
+
+Run `update.py` to initialize git submodules and fetch test files.
+
+```bash
+python2 update.py
+```
+
+Get the Emscripten toolchain into your environment:
+
+```bash
+. $(dirname $(which emsdk))/emsdk_env.sh
+```
+
+Make
+
+```bash
+cmake . && make
+```
+
+May as well build `wasm.js` whilst you're in the area.
+
+```bash
+# Build wasm.js
+./build.sh
+```
+
+Now edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that you've compiled.
 
 ```bash
 # Edit that thing yourself
-echo "BINARYEN_ROOT='$HOME/where/is/binaryen_repo/bin'" >> ~/.emscripten
+echo "BINARYEN_ROOT='$HOME/git/binaryen/bin'" >> ~/.emscripten
 ```
 
 ##### Start compilin'
