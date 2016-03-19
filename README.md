@@ -112,7 +112,7 @@ You'll end up with a folder called `emsdk_portable/`, with a binary called `./em
 ./emsdk update
 ```
 
-####### Option A: compile a very new SDK yourself
+**Option A: compile a very new SDK yourself**
 
 ```bash
 # See what our options are
@@ -148,7 +148,7 @@ The following tools can be compiled from source:
 ./emsdk install emscripten-incoming-64bit
 ```
 
-####### Option B: download latest pre-compiled SDK binary
+**Option B: download latest pre-compiled SDK binary**
 
 (For casuals)
 
