@@ -157,17 +157,23 @@ The following tools can be compiled from source:
 ./emsdk install latest
 ```
 
-###### Activate Emscripten SDK
-
-Add the SDK to your `PATH` (for example in your `.bashrc`):
-
-```bash
-export PATH="/Users/birch/Documents/emsdk_portable:$PATH"
-```
+###### Get Emscripten SDK tools into your shell
 
 Open a new command-line shell.
 
 ```bash
 # activate (for the lifetime of this shell) the version of the emscripten SDK that you installed
 ./emsdk activate emscripten-tag-1.36.1-64bit
+```
+
+Add the SDK to your `PATH` (for example in your `.bashrc`):
+
+```bash
+export PATH="$HOME/Documents/emsdk_portable:$PATH"
+```
+
+You can now setup your env variables in any shell, by running:
+
+```bash
+emsdk_env.sh
 ```
