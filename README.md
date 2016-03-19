@@ -97,9 +97,37 @@ Clone this repository; it include's (for example) fasiha's changes to MeCab's `c
 git clone https://github.com/Birch-san/mecab-wasm.git
 ```
 
+##### Binaryen
+
+[Binaryen](https://github.com/WebAssembly/binaryen) is a compiler infrastructure and toolchain library which (crucially) includes a WebAssembly backend for our compiler.
+
+###### Install Binaryen
+
+**Get source**
+
+Clone Binaryen's GitHub repository:
+
+```bash
+git clone https://github.com/WebAssembly/binaryen.git
+```
+
+**Build source**
+
+Run `update.py` to initialize git submodules and fetch test files.
+
+```bash
+python2 update.py
+```
+
+Make
+
+```bash
+cmake . && make
+```
+
 ##### Emscripten
 
-We're gonna use Emscripten as our toolchain.
+We're gonna use [Emscripten](https://github.com/kripken/emscripten) as our compiler.
 
 ###### Install Emscripten SDK
 
@@ -145,13 +173,13 @@ The following tools can be compiled from source:
 
 ```bash
 # install your weapon of choice
-./emsdk install emscripten-tag-1.36.1-64bit
+./emsdk install emscripten-incoming-64bit
 ```
 
 We will also need a very new Clang compiler:
 
 ```bash
-./emsdk install clang-tag-e1.36.1-64bit
+./emsdk install clang-incoming-64bit
 ```
 
 **Option B: download latest pre-compiled SDK binary**
@@ -169,7 +197,14 @@ Open a new command-line shell.
 
 ```bash
 # enshrines in your ~/.emscripten that this is your favourite Emscripten version at the moment
-./emsdk activate emscripten-tag-1.36.1-64bit clang-tag-e1.36.1-64bit
+./emsdk activate emscripten-incoming-64bit clang-incoming-64bit
+```
+
+Also edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that you compiled.
+
+```bash
+# Edit that thing yourself
+vi ~/.emscripten
 ```
 
 Add the Emscripten SDK to your `PATH` (for example in your `.bashrc`):
@@ -196,7 +231,7 @@ Get the Emscripten env variables into your shell:
 Use Emscripten toolchain to invoke `./configure`
 
 ```bash
-emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1" CFLAGS="-O1"
+EMCC_WASM_BACKEND=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1" CFLAGS="-O1 -s BINARYEN=1"
 ```
 
 You should now have two new files in the root of mecab-0.996:
