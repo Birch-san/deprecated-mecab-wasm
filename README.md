@@ -268,17 +268,7 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 
 `EMCONFIGURE_JS=1` ensures that we don't cheat on configure tests; enforces that we actually attempt compilation to js. This is worth doing, because we depend on the step `LLVM bitcode ⇒ asm.js` working correctly.
 
-You should now have some new friends in the root of mecab-0.996:
-
-```
-a.out
-a.out.js
-a.out.asm.js
-a.out.wast
-a.out.wast.mappedGlobals
-```
-
-And there should also be some LLVM intermediate code in:
+There should now be some LLVM intermediate code in:
 
 ```
 src/.libs
@@ -302,15 +292,33 @@ mecab-test-gen
 char_property.o, connector.o, context_id.o, dictionary.o, dictionary_compiler.o, dictionary_generator.o, dictionary_rewriter.o, eval.o, feature_index.o, iconv_utils.o, lbfgs.o, learner.o, learner_tagger.o, nbest_generator.o, param.o, string_buffer.o, tagger.o, tokenizer.o, utils.o, viterbi.o, writer.o
 ```
 
-The `.dylib` is Mac-specific. Maybe a Linux user would get `.so`.
+The `libmecab.dylib` is Mac-specific. A Linux user would get `libmecab.so`.
 
 Apparently we need to rename the MeCab LLVM intermediate representation (IR) so that Emscripten knows what to do with it:
 
 ```bash
+cd src/.libs
+
 # rename mecab LLVM IR
-cp src/.libs/mecab src/.libs/mecab.bc
-# copy default mecabrc into src/.libs
-cp /usr/local/etc/mecabrc src/.libs
-# ask your existing mecab executable where ipadic lives, and copy that folder into src/.libs
-cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) src/.libs
+cp mecab mecab.bc
+# grab a copy of the default mecabrc
+cp /usr/local/etc/mecabrc .
+# ask your existing mecab executable where ipadic lives, and copy that folder
+cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
+```
+
+Now all the files you need are inside `src/.libs`! From there, run:
+
+```bash
+emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" --preload-file mecabrc --preload-file ipadic/
+```
+
+This should give you:
+
+```
+mecab.asm.js
+mecab.data
+mecab.js
+mecab.wast
+mecab.wast.mappedGlobals
 ```
