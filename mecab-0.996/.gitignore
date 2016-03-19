@@ -17,3 +17,6 @@ src/mecab-system-eval
 src/mecab-test-gen
 stamp-h1
 mecab.iss
+
+a.out
+a.out.js

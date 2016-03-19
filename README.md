@@ -91,7 +91,7 @@ Now we can start thinking about WebAssembling.
 
 ##### Alternative MeCab source
 
-Clone this repository; there are changes to (for example) MeCab's `configure` script.
+Clone this repository; it include's (for example) fasiha's changes to MeCab's `configure` script, and fasiha's interface for the web browser to invoke MeCab.
 
 ```bash
 git clone https://github.com/Birch-san/mecab-wasm.git
@@ -197,4 +197,17 @@ Use Emscripten toolchain to invoke `./configure`
 
 ```bash
 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1" CFLAGS="-O1"
+```
+
+You should now have two new files in the root of mecab-0.996:
+
+```
+a.out
+a.out.js
+```
+
+And there should also be some LLVM intermediate code in:
+
+```
+src/.libs
 ```
