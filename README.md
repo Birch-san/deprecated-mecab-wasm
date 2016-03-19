@@ -223,7 +223,7 @@ Now edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that you
 
 ```bash
 # Edit that thing yourself
-echo "BINARYEN_ROOT='$HOME/git/binaryen/bin'" >> ~/.emscripten
+echo "BINARYEN_ROOT='$HOME/git/binaryen'" >> ~/.emscripten
 ```
 
 ##### Start compilin'
@@ -244,8 +244,14 @@ Get the Emscripten env variables into your shell:
 Use Emscripten toolchain to invoke `./configure`
 
 ```bash
-EMCC_WASM_BACKEND=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1" CFLAGS="-O1 -s BINARYEN=1"
+emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1" CFLAGS="-O1 -s BINARYEN=1"
 ```
+
+> Note:
+> I am a bit confused; the [Binaryen README.md](https://github.com/WebAssembly/binaryen/blame/c8faff5ddbc7e93134763a845371b66bc2be56a4/README.md#L114-L137) suggests that if you use "normal" Emscripten (i.e. Emscripten with its own `fastcomp` fork of LLVM), then you *need* to instruct it to use its WebAssembly backend, (à la `EMCC_WASM_BACKEND=1`). 
+> When I _tried_ to follow this advice and provide `EMCC_WASM_BACKEND=1` — with a `BINARYEN_ROOT` entry in my `~/.emscripten` — emcc swore that my LLVM has no WebAssembly backend installed. I contend that this was false.
+> In conclusion: my hand is forced. I have intentionally omitted the `EMCC_WASM_BACKEND=1` env var. I assert that this means the compilation will take my "Plan B" route of `C/C++ Source ⇒ LLVM bitcode ⇒ asm.js ⇒ asm2wasm" rather than my Plan A of `C/C++ Source ⇒ WebAssembly LLVM backend ⇒ s2wasm ⇒ WebAssembly`.
+> This angers me.
 
 You should now have two new files in the root of mecab-0.996:
 
