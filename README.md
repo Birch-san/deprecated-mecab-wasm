@@ -148,6 +148,12 @@ The following tools can be compiled from source:
 ./emsdk install emscripten-tag-1.36.1-64bit
 ```
 
+We will also need a very new Clang compiler:
+
+```bash
+./emsdk install clang-tag-e1.36.1-64bit
+```
+
 **Option B: download latest pre-compiled SDK binary**
 
 (For casuals)
@@ -163,7 +169,7 @@ Open a new command-line shell.
 
 ```bash
 # enshrines in your ~/.emscripten that this is your favourite Emscripten version at the moment
-./emsdk activate emscripten-tag-1.36.1-64bit
+./emsdk activate emscripten-tag-1.36.1-64bit clang-tag-e1.36.1-64bit
 ```
 
 Add the Emscripten SDK to your `PATH` (for example in your `.bashrc`):
