@@ -266,11 +266,14 @@ emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN
 
 > This angers me.
 
-You should now have two new files in the root of mecab-0.996:
+You should now have some new friends in the root of mecab-0.996:
 
 ```
 a.out
 a.out.js
+a.out.asm.js
+a.out.wast
+a.out.wast.mappedGlobals
 ```
 
 And there should also be some LLVM intermediate code in:
