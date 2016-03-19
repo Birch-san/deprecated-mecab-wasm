@@ -193,24 +193,24 @@ We will also need a very new Clang compiler:
 
 ###### Get Emscripten SDK tools into your shell
 
+Add the Emscripten SDK to your `PATH` (for example in your `.bashrc`):
+
+```bash
+export PATH="$HOME/Documents/emsdk_portable:$PATH"
+```
+
 Open a new command-line shell.
 
 ```bash
 # enshrines in your ~/.emscripten that this is your favourite Emscripten version at the moment
-./emsdk activate emscripten-incoming-64bit clang-incoming-64bit
+emsdk activate emscripten-incoming-64bit clang-incoming-64bit
 ```
 
 Also edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that you compiled.
 
 ```bash
 # Edit that thing yourself
-echo "BINARYEN_ROOT=$HOME/where/is/binaryen" >> ~/.emscripten
-```
-
-Add the Emscripten SDK to your `PATH` (for example in your `.bashrc`):
-
-```bash
-export PATH="$HOME/Documents/emsdk_portable:$PATH"
+echo "BINARYEN_ROOT='$HOME/where/is/binaryen_repo/bin'" >> ~/.emscripten
 ```
 
 ##### Start compilin'
