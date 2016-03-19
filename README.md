@@ -141,11 +141,11 @@ The following tools can be compiled from source:
            emscripten-master-64bit  
 ```
 
-`emscripten-incoming-64bit` looks pretty new.
+`emscripten-tag-1.36.1-64bit` looks pretty new.
 
 ```bash
-# what could go wrong?
-./emsdk install emscripten-incoming-64bit
+# install your weapon of choice
+./emsdk install emscripten-tag-1.36.1-64bit
 ```
 
 **Option B: download latest pre-compiled SDK binary**
@@ -163,4 +163,11 @@ Add the SDK to your `PATH` (for example in your `.bashrc`):
 
 ```bash
 export PATH="/Users/birch/Documents/emsdk_portable:$PATH"
+```
+
+Open a new command-line shell.
+
+```bash
+# activate (for the lifetime of this shell) the version of the emscripten SDK that you installed
+./emsdk activate emscripten-tag-1.36.1-64bit
 ```
