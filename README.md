@@ -29,3 +29,29 @@ If LLVM's WebAssembly backend is not ready, then we can take a more scenic route
 > C/C++ Source ⇒ LLVM bitcode ⇒ asm.js ⇒ asm2wasm
 
 This seems like a wasted step though.
+
+## Build Instructions (so far)
+
+Apparently we need to first install Mecab in an ordinary manner, in order to ensure a dictionary is built.
+
+### Install MeCab
+
+#### Acquire source
+
+From [MeCab's website](https://taku910.github.io/mecab/), download the [latest source release](https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE) (`mecab-0.996.tar.gz` at the time of writing — 19 Mar 2016).
+
+#### Make
+
+##### Extra step for Linux
+
+_Note: Linux users may need to first tell their runtime shared-library loader where the shared libraries at_
+
+```bash
+export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+```
+
+##### Nominal process
+
+```bash
+./configure --with-charset=utf8 && make && make test && sudo make install
+```
