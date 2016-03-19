@@ -204,7 +204,7 @@ Also edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that yo
 
 ```bash
 # Edit that thing yourself
-vi ~/.emscripten
+echo "BINARYEN_ROOT=$HOME/where/is/binaryen" >> ~/.emscripten
 ```
 
 Add the Emscripten SDK to your `PATH` (for example in your `.bashrc`):
