@@ -101,6 +101,8 @@ git clone https://github.com/Birch-san/mecab-wasm.git
 
 We're gonna use Emscripten as our toolchain.
 
+###### Install Emscripten SDK
+
 From [Emscripten's download page](https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html), download (for example) [Portable Emscripten SDK for Linux and OS X](https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz).
 
 You'll end up with a folder called `emsdk_portable/`, with a binary called `./emsdk`.
@@ -110,7 +112,7 @@ You'll end up with a folder called `emsdk_portable/`, with a binary called `./em
 ./emsdk update
 ```
 
-###### Option A: compile a very new SDK yourself
+####### Option A: compile a very new SDK yourself
 
 ```bash
 # See what our options are
@@ -146,11 +148,19 @@ The following tools can be compiled from source:
 ./emsdk install emscripten-incoming-64bit
 ```
 
-###### Option B: download latest pre-compiled SDK binary
+####### Option B: download latest pre-compiled SDK binary
 
 (For casuals)
 
 ```bash
 # Download and install the latest SDK tools.
 ./emsdk install latest
+```
+
+###### Activate Emscripten SDK
+
+Add the SDK to your `PATH` (for example in your `.bashrc`):
+
+```bash
+export PATH="/Users/birch/Documents/emsdk_portable:$PATH"
 ```
