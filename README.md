@@ -97,13 +97,60 @@ Clone this repository; there are changes to (for example) MeCab's `configure` sc
 git clone https://github.com/Birch-san/mecab-wasm.git
 ```
 
-##### Up-to-date `llc` (LLVM static compiler)
+##### Emscripten
 
-The WebAssembly backend to LLVM is pretty new, so I assume we need to update LLVM.
+We're gonna use Emscripten as our toolchain.
+
+From [Emscripten's download page](https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html), download (for example) [Portable Emscripten SDK for Linux and OS X](https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz).
+
+You'll end up with a folder called `emsdk_portable/`, with a binary called `./emsdk`.
 
 ```bash
-brew install llvm
+# Fetch the latest registry of available tools.
+./emsdk update
 ```
 
-Apparently I got `llvm-3.6.2.el_capitan.bottle.1.tar.gz`.
+###### Option A: compile a very new SDK yourself
 
+```bash
+# See what our options are
+./emsdk list
+```
+
+I got something like this:
+
+```
+The following tools can be compiled from source:
+           clang-tag-e1.36.0-32bit  
+           clang-tag-e1.36.1-32bit  
+           clang-tag-e1.36.0-64bit  
+           clang-tag-e1.36.1-64bit  
+           clang-incoming-32bit     
+           clang-incoming-64bit     
+           clang-master-32bit       
+           clang-master-64bit       
+           emscripten-tag-1.36.0-32bit
+           emscripten-tag-1.36.1-32bit
+           emscripten-tag-1.36.0-64bit
+           emscripten-tag-1.36.1-64bit
+           emscripten-incoming-32bit
+           emscripten-master-32bit  
+           emscripten-incoming-64bit
+           emscripten-master-64bit  
+```
+
+`emscripten-incoming-64bit` looks pretty new.
+
+```bash
+# what could go wrong?
+./emsdk install emscripten-incoming-64bit
+```
+
+###### Option B: download latest pre-compiled SDK binary
+
+(For casuals)
+
+```bash
+# Download and install the latest SDK tools.
+./emsdk install latest
+```
