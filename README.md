@@ -38,7 +38,7 @@ Apparently we need to first install Mecab in an ordinary manner, in order to ens
 
 #### Acquire source
 
-From [MeCab's website](https://taku910.github.io/mecab/), download the [latest source release](https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE) (`mecab-0.996.tar.gz` at the time of writing — 19 Mar 2016).
+From [MeCab's website](https://taku910.github.io/mecab/), download the [latest source release](https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE) (`mecab-0.996.tar.gz` at the time of writing — Mar 2016).
 
 #### Make
 
@@ -55,3 +55,34 @@ export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 ```bash
 ./configure --with-charset=utf8 && make && make test && sudo make install
 ```
+
+### Install dictionary
+
+#### Acquire source
+
+From [MeCab's website](https://taku910.github.io/mecab/), download and build the latest [IPADIC dictionary](https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM) (`mecab-ipadic-2.7.0-20070801` at the time of writing — Mar 2016) for your native binary MeCab.
+
+#### Make
+
+```bash
+./configure --with-charset=utf-8 && make && sudo make install
+```
+
+### Sanity check
+
+Confirm that mecab is setup, and on your PATH:
+
+```bash
+echo test | mecab
+```
+
+Expected output:
+
+```bash
+test    名詞,固有名詞,組織,*,*,*,*
+EOS
+```
+
+### mecab-wasm
+
+Now we can start thinking about WebAssembling.
