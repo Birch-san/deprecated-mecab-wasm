@@ -44,7 +44,7 @@ From [MeCab's website](https://taku910.github.io/mecab/), download the [latest s
 
 ##### Extra step for Linux
 
-_Note: Linux users may need to first tell their runtime shared-library loader where the shared libraries at_
+_Linux users may need first to tell their runtime shared library loader in which directories to find shared libraries, like so:_
 
 ```bash
 export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
