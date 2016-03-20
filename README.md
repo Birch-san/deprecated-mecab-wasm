@@ -422,7 +422,7 @@ cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
 Now all the files you need are inside `src/.libs`! From there, run:
 
 ```bash
-emcc -O1 mecab.bc libmecab.dylib -o mecab.html -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/ -s TOTAL_MEMORY=134217728
+emcc -O1 mecab.bc libmecab.dylib -o mecab.html -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/ -s TOTAL_MEMORY=134217728 --memory-init-file 1
 ```
 
 This should give you:
@@ -432,6 +432,7 @@ mecab.asm.js
 mecab.data
 mecab.js
 mecab.html
+mecab.html.mem
 mecab.wast
 mecab.wast.mappedGlobals
 mecab.wasm
