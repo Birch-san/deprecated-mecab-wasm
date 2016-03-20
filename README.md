@@ -367,6 +367,13 @@ CFLAGS = -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS="spidermonkify.py"'
 CXXFLAGS = -std=c++11 -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS="spidermonkify.py"'
 ```
 
+Heck, you could use `sed` if you're feeling brave. Here I use BSD sed (hence I use -E for extended regular expressions). GNU sed would use `-r` instead.
+
+```bash
+sed -i.bak -E "s/(\s+)(BINARYEN_SCRIPTS=(\S)+)(\s+)/\1'\2'\4/g" Makefile
+sed -i.bak -E "s/(\s+)(BINARYEN_SCRIPTS=(\S)+)(\s+)/\1'\2'\4/g" src/Makefile
+```
+
 Okay. _Now_ you are ready to run `make`:
 
 ```bash
