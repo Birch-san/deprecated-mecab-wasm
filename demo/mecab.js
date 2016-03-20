@@ -89645,7 +89645,7 @@ Module['FS_createPath']('/', 'ipadic', true, true);
   }
 
  }
- loadPackage({"files": [{"audio": 0, "start": 0, "crunched": 0, "end": 314, "filename": "/mecabrc"}, {"audio": 0, "start": 314, "crunched": 0, "end": 262810, "filename": "/ipadic/char.bin"}, {"audio": 0, "start": 262810, "crunched": 0, "end": 263503, "filename": "/ipadic/dicrc"}, {"audio": 0, "start": 263503, "crunched": 0, "end": 319413, "filename": "/ipadic/left-id.def"}, {"audio": 0, "start": 319413, "crunched": 0, "end": 3783129, "filename": "/ipadic/matrix.bin"}, {"audio": 0, "start": 3783129, "crunched": 0, "end": 3784606, "filename": "/ipadic/pos-id.def"}, {"audio": 0, "start": 3784606, "crunched": 0, "end": 3790847, "filename": "/ipadic/rewrite.def"}, {"audio": 0, "start": 3790847, "crunched": 0, "end": 3846757, "filename": "/ipadic/right-id.def"}, {"audio": 0, "start": 3846757, "crunched": 0, "end": 53045784, "filename": "/ipadic/sys.dic"}, {"audio": 0, "start": 53045784, "crunched": 0, "end": 53051474, "filename": "/ipadic/unk.dic"}], "remote_package_size": 53051474, "package_uuid": "1b7e7a69-779d-4695-99ca-63debbf6c679"});
+ loadPackage({"files": [{"audio": 0, "start": 0, "crunched": 0, "end": 314, "filename": "/mecabrc"}, {"audio": 0, "start": 314, "crunched": 0, "end": 262810, "filename": "/ipadic/char.bin"}, {"audio": 0, "start": 262810, "crunched": 0, "end": 263503, "filename": "/ipadic/dicrc"}, {"audio": 0, "start": 263503, "crunched": 0, "end": 319413, "filename": "/ipadic/left-id.def"}, {"audio": 0, "start": 319413, "crunched": 0, "end": 3783129, "filename": "/ipadic/matrix.bin"}, {"audio": 0, "start": 3783129, "crunched": 0, "end": 3784606, "filename": "/ipadic/pos-id.def"}, {"audio": 0, "start": 3784606, "crunched": 0, "end": 3790847, "filename": "/ipadic/rewrite.def"}, {"audio": 0, "start": 3790847, "crunched": 0, "end": 3846757, "filename": "/ipadic/right-id.def"}, {"audio": 0, "start": 3846757, "crunched": 0, "end": 53045784, "filename": "/ipadic/sys.dic"}, {"audio": 0, "start": 53045784, "crunched": 0, "end": 53051474, "filename": "/ipadic/unk.dic"}], "remote_package_size": 53051474, "package_uuid": "6eae9916-6304-4831-b4eb-40054be837ac"});
 
 })();
 
@@ -90761,7 +90761,7 @@ function enlargeMemory() {
 
 
 var TOTAL_STACK = Module['TOTAL_STACK'] || 5242880;
-var TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 67108864;
+var TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 134217728;
 
 var totalMemory = 64*1024;
 while (totalMemory < TOTAL_MEMORY || totalMemory < 2*TOTAL_STACK) {

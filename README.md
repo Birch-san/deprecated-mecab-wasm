@@ -321,7 +321,7 @@ Use Emscripten toolchain to invoke `./configure`.
 If at any point you goof up: erase all evidence with `git clean -fxd`.
 
 ```bash
-EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=\"spidermonkify.py\" -s TOTAL_MEMORY=2147483648" CFLAGS="-O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=\"spidermonkify.py\" -s TOTAL_MEMORY=2147483648"
+EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=\"spidermonkify.py\" -s TOTAL_MEMORY=134217728" CFLAGS="-O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=\"spidermonkify.py\" -s TOTAL_MEMORY=134217728"
 ```
 
 > **Note:**  
@@ -356,8 +356,8 @@ So, my solution is: dive in and apply some post-processing of your own to the Ma
 The `Makefile` you get by default will have lines that look like this:
 
 ```bash
-CFLAGS = -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=spidermonkify.py'
-CXXFLAGS = -std=c++11 -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=spidermonkify.py'
+CFLAGS = -O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS="spidermonkify.py"
+CXXFLAGS = -std=c++11 -O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS="spidermonkify.py"
 ```
 
 Manually edit the files `Makefile` **and** `src/Makefile` to use quotation more like this:
@@ -415,7 +415,7 @@ cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
 Now all the files you need are inside `src/.libs`! From there, run:
 
 ```bash
-emcc -O1 mecab.bc libmecab.dylib -o mecab.html -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/ -s TOTAL_MEMORY=2147483648
+emcc -O1 mecab.bc libmecab.dylib -o mecab.html -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/ -s TOTAL_MEMORY=134217728
 ```
 
 This should give you:
