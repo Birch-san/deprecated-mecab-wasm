@@ -7,22 +7,85 @@
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>Unity WebGL Player | AngryBots</title>
-  <!-- <link rel="stylesheet" href="TemplateData/style.css"> -->
-  <!-- <link rel="shortcut icon" href="TemplateData/favicon.ico" /> -->
-  <script src="UnityProgress.js"></script>
+  <title>MeCab WebAssembly</title>
+  <style type="text/css">
+  label {
+    display:block;
+    font-weight: 700;
+  }
+  /*.hide-until-load {
+    display:none;
+  }*/
+  #input {
+    width: 80%;
+    height: 200px;
+    font-size: 1.2em;
+  }
+  #args {
+    width: 80%;
+    height: 1.2em;
+    font-size: 1.2em;
+    font-family:monospace;
+  }
+  #submit {
+    display: inline-block;
+  }
+  #output {
+    width: 80%;
+    height: 200px;
+    font-size: 1.2em;
+    /*resize: both;*/
+  }
+  </style>
 </head>
-<body class="template" scroll="no" style="overflow: hidden; margin: 0px; background-color: black;">
-<!--    <p class="header"><span>Unity WebGL Player | </span>AngryBots</p>
-  <div class="template-wrap clear"> -->
-    <!-- <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" height="600px" width="938px"></canvas> -->
-  <!--
-      <div class="logo"></div>
-      <div class="fullscreen"><img src="TemplateData/fullscreen.png" width="38" height="38" alt="Fullscreen" title="Fullscreen" onclick="SetFullscreen(1);" /></div>
-      <div class="title">AngryBots</div>
-    </div>
-    <p class="footer">&laquo; created with <a href="http://unity3d.com/" title="Go to unity3d.com">Unity</a> &raquo;</p>
-  -->
+<body>
+
+<div class="hide-until-load">
+  <div>
+    <label>Input</label>
+    <textarea id="input">今日は、世界。</textarea>
+    <input type="button" value="Tokenize" id="submit">
+  </div>
+  <div>
+    <label>Command-line args</label>
+    <textarea id="args"></textarea>
+    <p id="examples-toggle">See example args</p>
+    <dl id="example-arguments" hidden>
+      <dt><tt>-O yomi</tt></dt>
+      <dd>Convert to onyomi</dd>
+      <dt><tt>-O wakati</tt></dt>
+      <dd>Put spaces between words</dd>
+      <dt><tt>-O chasen</tt></dt>
+      <dd>See full decomposition</dd>
+      <dt><tt>--node-format=%m[%f[7]] --eos-format=\n --unk-format=%m[]</tt></dt>
+      <dd><a href="https://ankiweb.net/shared/info/3918629684">Anki Japanese Support</a> formatting</dd>
+      <dt>Note to experienced users</dt>
+      <dd><tt>-r mecabrc -d ipadic/</tt> flags will be automatically added. The results are based on the IPADIC dictionary.
+      </dd>
+    </dl>
+  </div>
+  <div>
+    <label>Output</label>
+    <textarea readonly id="output"></textarea>
+  </div>
+</div>
+
+<div class="loader">
+  <label>Number of Dependencies in-flight:</label>
+  <input type="number" readonly id="deps">
+</div>
+<div class="loader">
+  <label>Percent loaded:</label>
+  <input type="text" readonly id="percent">
+</div>
+<div class="loader">
+  <label>Bytes loaded:</label>
+  <input type="number" readonly id="numerator">
+</div>
+<div class="loader">
+  <label>Bytes outstanding:</label>
+  <input type="number" readonly id="denominator">
+</div>
 
   <script type='text/javascript'>
 
@@ -53,7 +116,12 @@ function updateProgress() {
 
   var progress = numerator/denominator;
 
-  console.log(numerator, denominator, waiting.length, progress);
+  // console.log(numerator, denominator, waiting.length, progress);
+  document.getElementById("deps").value = waiting.length;
+  document.getElementById("numerator").value = numerator;
+  document.getElementById("denominator").value = denominator;
+  document.getElementById("percent").value = (isNaN(progress) ? "?" : Math.floor(progress*100))+"%";
+
 }
 
 /**
@@ -98,9 +166,9 @@ From Andrew Newdigate, http://stackoverflow.com/a/10796951/5257399
 
       this.onloadend = function(event) {
         // console.log(event);
-        removeFromWaiting(this);
+        removeFromWaiting(progObject);
         updateProgress();
-      }.bind(this);
+      };
 
       open.call(this, method, url, async, user, pass);
   };
@@ -165,7 +233,21 @@ function printErr(text) {
 var mecab_do;
 function wrapFunctions() {
   mecab_do = Module.cwrap('mecab_do2', 'number', ['string']);
-  // console.log('wrapped');
+}
+
+function begin() {
+  wrapFunctions();
+
+  [].forEach.call(document.getElementsByClassName("loader"),
+    function (el) {
+      el.style.display = "none";
+    });
+
+  [].forEach.call(document.getElementsByClassName("hide-until-load"),
+    function (el) {
+      el.className = "";
+    });
+
   yo();
 }
 
@@ -173,7 +255,7 @@ var canvas = document.getElementById("canvas");
 var Module = {
   TOTAL_MEMORY: 134217728,
   preRun : [setupFiles],
-  postRun : [wrapFunctions],
+  postRun : [begin],
   noExitRuntime : true,
   noInitialRun : false,
   print : printer,
@@ -191,28 +273,6 @@ var Module = {
     if (typeof Wasm !== 'object') (alert("You need a browser which supports WebAssembly to run this content. See the WebAssembly demo page for instructions."), window.history.back());
     hasWebGL ? mobile ? confirm("Please note that Unity WebGL is not currently supported on mobiles. Press Ok if you wish to continue anyway.") || window.history.back() : -1 == browser.indexOf("Firefox") && -1 == browser.indexOf("Chrome") && -1 == browser.indexOf("Safari") && (confirm("Please note that your browser is not currently supported for this Unity WebGL content. Try installing Firefox, or press Ok if you wish to continue anyway.") || window.history.back()) : (alert("You need a browser which supports WebGL to run this content. Try installing Firefox."), window.history.back())
   },
-  // progress: {
-  //   SetProgress: function() {
-  //     console.log('SetProgress');
-  //     console.log(arguments);
-  //   },
-  //   SetMessage: function() {
-  //     console.log('SetMessage');
-  //     console.log(arguments);
-  //   },
-  //   Clear: function() {
-  //     console.log('Clear');
-  //     console.log(arguments);
-  //   },
-  //   Update: function() {
-  //     console.log('Update');
-  //     console.log(arguments);
-  //   }
-  // }
-  // monitorRunDependencies: function() {
-    // console.log(arguments);
-  // }
-  // progress: (new UnityProgress(canvas)),
 };
 
 var xhr = new XMLHttpRequest();
