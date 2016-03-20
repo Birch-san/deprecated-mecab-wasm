@@ -249,7 +249,7 @@ xhr.onload = function() {
   // document.body.appendChild(script);
 
   var codeXHR = new XMLHttpRequest();
-  codeXHR.open('GET', 'mecab.js', true);
+  codeXHR.open('GET', 'mecab.min.js', true);
   codeXHR.onload = function() {
     var code = codeXHR.responseText;
     var blob = new Blob([code], {type: 'text/javascript'});
