@@ -41,6 +41,13 @@
     /*font-size: 1.2em;*/
     /*resize: both;*/
   }
+  #error-box {
+    width: 80%;
+    height: 200px;
+    font-family:monospace;
+    /*font-size: 1.2em;*/
+    /*resize: both;*/
+  }
   #examples-toggle {
     cursor: pointer;
     text-decoration: underline;
@@ -105,10 +112,17 @@
     <textarea readonly id="output"></textarea>
   </div>
 </div>
+<div id="error" hidden>
+  <label>Error</label>
+  <textarea readonly id="error-box"></textarea>
+</div>
 
 <div class="loader">
   <label>Number of Dependencies in-flight:</label>
   <input type="number" readonly id="deps">
+  <div>
+    <em>Please note that one of the dependencies has a 50MB payload, and provides no progress reports. Watch your network activity for more information.</em>
+  </div>
 </div>
 <div class="loader">
   <label>Percent loaded:</label>
@@ -270,6 +284,19 @@ function printErr(text) {
   if (0) {              // XXX disabled for safety typeof dump == 'function') {
     dump(text + '\n');  // fast, straight to the real console
   } else {
+    console.log("yeah we got an error", text);
+    if (text.indexOf("no native wasm support detected") !== -1) {
+      console.log("gon' hide the preloader");
+      [].forEach.call(document.getElementsByClassName("loader"),
+        function (el) {
+          el.style.display = "none";
+        });
+    }
+    console.log("still alive");
+    document.getElementById("error").hidden = false;
+
+    var val = document.getElementById("error-box").value;
+    document.getElementById("error-box").value = (val + "\n" + text).trim();
     console.error(text);
   }
 }
