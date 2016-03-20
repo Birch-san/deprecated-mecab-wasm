@@ -443,3 +443,13 @@ Update the demo in the demo folder using:
 ```bash
 cp mecab.* ../../../demo
 ```
+
+Minify the mecab.js using [UglifyJs2](https://github.com/mishoo/UglifyJS2):
+
+```bash
+# Get UglifyJs2 if you haven't got it already
+npm install uglify-js -g
+
+# almost all compressor switches are enabled by default
+uglifyjs --screw-ie8 --compress unsafe --mangle -v -o mecab.min.js -- mecab.js
+```
