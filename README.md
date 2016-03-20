@@ -415,8 +415,10 @@ cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
 Now all the files you need are inside `src/.libs`! From there, run:
 
 ```bash
-emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/
+emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/ --pre-js ../../../preamble.js
 ```
+
+`--pre-js ../../../preamble.js` Preloads Emscripten's [preamble.js](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html) — JavaScript APIs providing programmatic access for interacting with compiled C code (i.e. filesystem).
 
 This should give you:
 
@@ -428,4 +430,10 @@ mecab.wast
 mecab.wast.mappedGlobals
 mecab.wasm
 mecab.wasm.mappedGlobals
+```
+
+Update the demo in the demo folder using:
+
+```bash
+cp mecab.* ../../../demo
 ```
