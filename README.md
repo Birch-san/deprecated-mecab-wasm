@@ -321,7 +321,7 @@ Use Emscripten toolchain to invoke `./configure`.
 If at any point you goof up: erase all evidence with `git clean -fxd`.
 
 ```bash
-EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=spidermonkify.py -s ALLOW_MEMORY_GROWTH=1" CFLAGS="-O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=spidermonkify.py -s ALLOW_MEMORY_GROWTH=1"
+EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=\"spidermonkify.py\" -s ALLOW_MEMORY_GROWTH=1" CFLAGS="-O1 -s BINARYEN=1 -s BINARYEN_SCRIPTS=\"spidermonkify.py\" -s ALLOW_MEMORY_GROWTH=1"
 ```
 
 > **Note:**  
@@ -345,7 +345,7 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 
 `EMCONFIGURE_JS=1` ensures that we don't cheat on configure tests; enforces that we actually attempt compilation to js. This is worth doing, because we depend on the step `LLVM bitcode ⇒ asm.js` working correctly.
 
-The CXXFLAG and CFLAG `-s BINARYEN_SCRIPTS=spidermonkify.py` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
+The CXXFLAG and CFLAG `-s BINARYEN_SCRIPTS=\"spidermonkify.py\"` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
 
 Okay, now for `make`.
 
