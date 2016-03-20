@@ -292,7 +292,7 @@ Use Emscripten toolchain to invoke `./configure`.
 If at any point you goof up: erase all evidence with `git clean -fxd`.
 
 ```bash
-EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS=\"spidermonkify.py\"" CFLAGS="-O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS=\"spidermonkify.py\""
+EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS=spidermonkify.py" CFLAGS="-O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS=spidermonkify.py"
 ```
 
 > **Note:**  
@@ -316,9 +316,29 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 
 `EMCONFIGURE_JS=1` ensures that we don't cheat on configure tests; enforces that we actually attempt compilation to js. This is worth doing, because we depend on the step `LLVM bitcode ⇒ asm.js` working correctly.
 
-The CXXFLAG and CFLAG `-s BINARYEN_SCRIPTS=\"spidermonkify.py\"` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
+The CXXFLAG and CFLAG `-s BINARYEN_SCRIPTS=spidermonkify.py` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
 
-Okay, now `make`:
+Okay, now for `make`.
+
+I was not able to find a way to make `./configure` faithfully pass the correct quoting upon `BINARYEN_SCRIPTS` into the `Makefile`. Yes, I tried various types of escaping and double-quoting.
+
+So, my solution is: dive in and apply some post-processing of your own to the Makefiles (sorry).
+
+The `Makefile` you get by default will have lines that look like this:
+
+```bash
+CFLAGS = -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=spidermonkify.py'
+CXXFLAGS = -std=c++11 -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=spidermonkify.py'
+```
+
+Manually edit the files `Makefile` **and** `src/Makefile` to use quotation more like this:
+
+```bash
+CFLAGS = -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS="spidermonkify.py"'
+CXXFLAGS = -std=c++11 -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS="spidermonkify.py"'
+```
+
+Okay. _Now_ you are ready to run `make`:
 
 ```bash
 emmake make
