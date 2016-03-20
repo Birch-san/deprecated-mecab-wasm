@@ -22,6 +22,8 @@ chrome://flags#enable-webassembly
 
 Restart Google Chrome Canary.
 
+### Self-host
+
 Clone the repository:
 
 ```bash
@@ -36,8 +38,9 @@ npm index.js
 
 Browse to `http://localhost:3000/`.
 
-You will see what I have managed so far. Which might not be anything yet.
+### View on Birchlabs
 
+This demo is now [hosted on Birchlabs](http://birchlabs.co.uk/wasm).
 
 ## Plan
 
