@@ -15,7 +15,7 @@
 <body class="template" scroll="no" style="overflow: hidden; margin: 0px; background-color: black;">
 <!--    <p class="header"><span>Unity WebGL Player | </span>AngryBots</p>
   <div class="template-wrap clear"> -->
-    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" height="600px" width="938px"></canvas>
+    <!-- <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" height="600px" width="938px"></canvas> -->
   <!--
       <div class="logo"></div>
       <div class="fullscreen"><img src="TemplateData/fullscreen.png" width="38" height="38" alt="Fullscreen" title="Fullscreen" onclick="SetFullscreen(1);" /></div>
@@ -26,68 +26,114 @@
 
   <script type='text/javascript'>
 
+var waiting = [];
 
+function updateProgress() {
+  // console.log(JSON.stringify(waiting, null, "  "));
+  var defined = waiting.filter(function(entry) {
+    return entry.total !== undefined && entry.loaded !== undefined;
+  });
+  // console.log(defined);
 
-    function softFullscreenResizeWebGLRenderTarget() {
-      var inHiDPIFullscreenMode = true;
-      var inAspectRatioFixedFullscreenMode = false;
-      var inPixelPerfectFullscreenMode = true;
-      var inCenteredWithoutScalingFullscreenMode = false;
-      var screenWidth = inHiDPIFullscreenMode ? Math.round(window.innerWidth*window.devicePixelRatio) : window.innerWidth;
-      var screenHeight = inHiDPIFullscreenMode ? Math.round(window.innerHeight*window.devicePixelRatio) : window.innerHeight;
-//  var screenWidth = screen.width * window.devicePixelRatio;
-//  var screenHeight = screen.height * window.devicePixelRatio;
-var w = screenWidth;
-var h = screenHeight;
-var canvas = Module['canvas'];
-var x = canvas.width;
-var y = canvas.height;
-var topMargin;
+  function sum(a, b) {
+    return a + b;
+  };
 
-if (inAspectRatioFixedFullscreenMode) {
-  if (w*y < x*h) h = (w * y / x) | 0;
-  else if (w*y > x*h) w = (h * x / y) | 0;
-  topMargin = ((screenHeight - h) / 2) | 0;
+  var numerator = defined
+  .map(function(iterand) {
+    return iterand.loaded;
+  })
+  .reduce(sum, 0);
+
+  var denominator = defined
+  .map(function(iterand) {
+    return iterand.total;
+  })
+  .reduce(sum, 0);
+
+  var progress = numerator/denominator;
+
+  console.log(numerator, denominator, waiting.length, progress);
 }
 
-if (inPixelPerfectFullscreenMode) {
-  canvas.width = w;
-  canvas.height = h;
-  console.log('new canvas size: ' + w + 'x' + h);
-  if (canvas.GLctxObject) canvas.GLctxObject.GLctx.viewport(0, 0, canvas.width, canvas.height);
-}
+/**
+From Andrew Newdigate, http://stackoverflow.com/a/10796951/5257399
+*/
+(function(XHR) {
+  "use strict";
 
-  // Back to CSS pixels.
-  if (inHiDPIFullscreenMode) {
-    topMargin /= window.devicePixelRatio;
-    w /= window.devicePixelRatio;
-    h /= window.devicePixelRatio;
-    // Round to nearest 4 digits of precision.
-    w = Math.round(w*1e4)/1e4;
-    h = Math.round(h*1e4)/1e4;
-    topMargin = Math.round(topMargin*1e4)/1e4;
+  var open = XHR.prototype.open;
+  var send = XHR.prototype.send;
+
+  // XHR.prototype.onload
+
+  XHR.prototype.open = function(method, url, async, user, pass) {
+      this._url = url;
+
+      var progObject = {
+        loaded: 0,
+        total: undefined
+      };
+
+      waiting.push(progObject);
+
+      function removeFromWaiting(ref) {
+        var index = waiting.indexOf(ref);
+        if(index !== -1) {
+          waiting.splice(index, 1);
+        }
+      }
+
+      this.onprogress = function(event) {
+        // if (event.loaded === ) {
+        //   removeFromWaiting(this);
+        // }
+        if (event.lengthComputable) {
+          // console.log(event.loaded, event.total);
+          progObject.loaded = event.loaded;
+          progObject.total = event.total;
+          updateProgress();
+        }
+      };
+
+      this.onloadend = function(event) {
+        // console.log(event);
+        removeFromWaiting(this);
+        updateProgress();
+      }.bind(this);
+
+      open.call(this, method, url, async, user, pass);
+  };
+
+  XHR.prototype.send = function(data) {
+      var self = this;
+      var oldOnReadyStateChange;
+      var url = this._url;
+
+      function onReadyStateChange() {
+          if(self.readyState == 4 /* complete */) {
+              /* This is where you can put code that you want to execute post-complete*/
+              /* URL is kept in this._url */
+          }
+
+          if(oldOnReadyStateChange) {
+              oldOnReadyStateChange();
+          }
+      }
+
+      /* Set xhr.noIntercept to true to disable the interceptor for a particular call */
+      if(!this.noIntercept) {            
+          if(this.addEventListener) {
+              this.addEventListener("readystatechange", onReadyStateChange, false);
+          } else {
+              oldOnReadyStateChange = this.onreadystatechange; 
+              this.onreadystatechange = onReadyStateChange;
+          }
+      }
+
+      send.call(this, data);
   }
-/*
-  if (inCenteredWithoutScalingFullscreenMode) {
-    var t = (window.innerHeight - parseInt(canvas.style.height)) / 2;
-    var b = (window.innerWidth - parseInt(canvas.style.width)) / 2;
-    __setLetterbox(canvas, t, b);
-  } else {
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    var b = (window.innerWidth - w) / 2;
-    __setLetterbox(canvas, topMargin, b);
-  }
-  */  
-  canvas.style.width = w + 'px';
-  canvas.style.height = h + 'px';
-}
-
-document.getElementById('canvas').style.width = window.innerWidth + 'px';
-document.getElementById('canvas').style.height = window.innerHeight + 'px';
-document.getElementById('canvas').width = window.innerWidth * window.devicePixelRatio;
-document.getElementById('canvas').height = window.innerHeight * window.devicePixelRatio;
-window.addEventListener('resize', softFullscreenResizeWebGLRenderTarget);
+})(XMLHttpRequest);
 
 function setupFiles() {
   FS.createDataFile('/', 'input.txt',
@@ -137,7 +183,7 @@ var Module = {
     console.error(err);
     return false;
   },
-  canvas: canvas,
+  // canvas: canvas,
   dataUrl: "mecab.data",
   // codeUrl: "mecab.js",
   memUrl: "mecab.html.mem",
@@ -145,13 +191,28 @@ var Module = {
     if (typeof Wasm !== 'object') (alert("You need a browser which supports WebAssembly to run this content. See the WebAssembly demo page for instructions."), window.history.back());
     hasWebGL ? mobile ? confirm("Please note that Unity WebGL is not currently supported on mobiles. Press Ok if you wish to continue anyway.") || window.history.back() : -1 == browser.indexOf("Firefox") && -1 == browser.indexOf("Chrome") && -1 == browser.indexOf("Safari") && (confirm("Please note that your browser is not currently supported for this Unity WebGL content. Try installing Firefox, or press Ok if you wish to continue anyway.") || window.history.back()) : (alert("You need a browser which supports WebGL to run this content. Try installing Firefox."), window.history.back())
   },
-  // preInit: function() {
-  //   console.log('preInit');
-  // },
-  // preRun: function() {
-  //   console.log('preRun');
-  // },
-  progress: (new UnityProgress(canvas)),
+  // progress: {
+  //   SetProgress: function() {
+  //     console.log('SetProgress');
+  //     console.log(arguments);
+  //   },
+  //   SetMessage: function() {
+  //     console.log('SetMessage');
+  //     console.log(arguments);
+  //   },
+  //   Clear: function() {
+  //     console.log('Clear');
+  //     console.log(arguments);
+  //   },
+  //   Update: function() {
+  //     console.log('Update');
+  //     console.log(arguments);
+  //   }
+  // }
+  // monitorRunDependencies: function() {
+    // console.log(arguments);
+  // }
+  // progress: (new UnityProgress(canvas)),
 };
 
 var xhr = new XMLHttpRequest();
