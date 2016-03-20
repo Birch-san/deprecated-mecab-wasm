@@ -56,6 +56,10 @@
   #footer {
     font-size: 75%;
   }
+
+  .loader input {
+    text-align: right;
+  }
   </style>
 </head>
 <body>
@@ -119,10 +123,7 @@
 
 <div class="loader">
   <label>Number of Dependencies in-flight:</label>
-  <input type="number" readonly id="deps">
-  <div>
-    <em>Please note that one of the dependencies has a 50MB payload, and provides no progress reports. Watch your network activity for more information.</em>
-  </div>
+  <input type="text" readonly id="deps">
 </div>
 <div class="loader">
   <label>Percent loaded:</label>
@@ -130,11 +131,11 @@
 </div>
 <div class="loader">
   <label>Bytes loaded:</label>
-  <input type="number" readonly id="numerator">
+  <input type="text" readonly id="numerator">
 </div>
 <div class="loader">
   <label>Bytes outstanding:</label>
-  <input type="number" readonly id="denominator">
+  <input type="text" readonly id="denominator">
 </div>
 
   <script type='text/javascript'>
@@ -175,9 +176,9 @@ function updateProgress() {
 
   // console.log(numerator, denominator, waiting.length, progress);
   document.getElementById("deps").value = waiting.length;
-  document.getElementById("numerator").value = numerator;
-  document.getElementById("denominator").value = denominator;
-  document.getElementById("percent").value = (isNaN(progress) ? "?" : Math.floor(progress*100))+"%";
+  document.getElementById("numerator").value = numerator || "?";
+  document.getElementById("denominator").value = denominator || "?";
+  document.getElementById("percent").value = (isNaN(progress) ? "Unknown" : Math.floor(progress*100))+"%";
 
 }
 
@@ -189,8 +190,6 @@ From Andrew Newdigate, http://stackoverflow.com/a/10796951/5257399
 
   var open = XHR.prototype.open;
   var send = XHR.prototype.send;
-
-  // XHR.prototype.onload
 
   XHR.prototype.open = function(method, url, async, user, pass) {
       this._url = url;
@@ -209,20 +208,21 @@ From Andrew Newdigate, http://stackoverflow.com/a/10796951/5257399
         }
       }
 
-      this.onprogress = function(event) {
-        // if (event.loaded === ) {
-        //   removeFromWaiting(this);
-        // }
+      this.addEventListener("progress", function(event) {
+        // console.log(JSON.stringify({
+        //   lengthComputable: event.lengthComputable,
+        //   loaded: event.loaded,
+        //   total: event.total,
+        //   target: event.currentTarget.responseURL
+        // }, null, "  "));
         if (event.lengthComputable) {
-          // console.log(event.loaded, event.total);
           progObject.loaded = event.loaded;
           progObject.total = event.total;
           updateProgress();
         }
-      };
+      });
 
       this.onloadend = function(event) {
-        // console.log(event);
         removeFromWaiting(progObject);
         updateProgress();
       };
