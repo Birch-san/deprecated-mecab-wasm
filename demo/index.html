@@ -86,16 +86,55 @@ document.getElementById('canvas').style.height = window.innerHeight + 'px';
 document.getElementById('canvas').width = window.innerWidth * window.devicePixelRatio;
 document.getElementById('canvas').height = window.innerHeight * window.devicePixelRatio;
 window.addEventListener('resize', softFullscreenResizeWebGLRenderTarget);
-</script>
 
-<script type='text/javascript'>
+function setupFiles() {
+  FS.createDataFile('/', 'input.txt',
+                    Module['intArrayFromString']('Input goes here.'), true,
+                    true);
+  FS.createDataFile('/', 'output.txt',
+                    'Output can be placed here (-o output.txt)', true, true);
+}
+
+function printer(text) {
+  text = Array.prototype.slice.call(arguments).join(' ');
+  // These replacements are necessary if you render to raw HTML
+  // text = text.replace(/&/g, "&amp;");
+  // text = text.replace(/</g, "&lt;");
+  // text = text.replace(/>/g, "&gt;");
+  // text = text.replace('\n', '<br>', 'g');
+  // console.log("OUTPUT", text);
+  FS.writeFile('output.txt', text);
+  console.log(text);
+}
+function printErr(text) {
+  text = Array.prototype.slice.call(arguments).join(' ');
+  if (0) {              // XXX disabled for safety typeof dump == 'function') {
+    dump(text + '\n');  // fast, straight to the real console
+  } else {
+    console.error(text);
+  }
+}
+function wrapFunctions() {
+  mecab_do = Module.cwrap('mecab_do2', 'number', ['string']);
+}
+
   var canvas = document.getElementById("canvas");
   var Module = {
-    TOTAL_MEMORY: 268435456,
-    errorhandler: null,			// arguments: err, url, line. This function must return 'true' if the error is handled, otherwise 'false'
+    TOTAL_MEMORY: 1024 * 1024 * 128,
+    preRun : [setupFiles],
+    postRun : [wrapFunctions],
+    noExitRuntime : true,
+    noInitialRun : false,
+    print : printer,
+    printErr : printErr,
+    errorhandler: function(err, url) {
+      // arguments: err, url, line. This function must return 'true' if the error is handled, otherwise 'false'
+      console.error(err);
+      return false;
+    },
     canvas: canvas,
     dataUrl: "mecab.data",
-    // codeUrl: "Release/AngryBots.js",
+    // codeUrl: "mecab.js",
     // memUrl: "Release/AngryBots.mem",
     compatibilitycheck: function() {
       if (typeof Wasm !== 'object') (alert("You need a browser which supports WebAssembly to run this content. See the WebAssembly demo page for instructions."), window.history.back());
@@ -125,8 +164,36 @@ window.addEventListener('resize', softFullscreenResizeWebGLRenderTarget);
     //   document.body.appendChild(script);
     // }
     // codeXHR.send(null);
+    yo();
+
   };
   xhr.send(null);
+
+function yo() {
+  var args = "";
+  args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
+
+  var command = 'mecab ' + args;
+
+  var text = "ようこそ";
+  FS.writeFile('input.txt', text);
+  FS.writeFile('output.txt', "");
+
+  mecab_do(args);
+
+  var output = FS.readFile('output.txt', {encoding : "utf8"});
+
+  console.log(output);
+  // var newlines = (output.match(/\n/g) || []).length + 1;
+  // var newblock = d3.select('#mecab-output')
+  //     .insert('div', ":first-child")
+  //     .classed('mecab-output-block', true);
+  // newblock.append('h1').text('Result');
+  // newblock.append('p').html("Equivalent command: <tt>" + command + "</tt>");
+  // newblock.append('textarea')
+  //     .text(output)
+  //     .style({height : (1.35*newlines)+"em"});
+}
 
 </script>
 
