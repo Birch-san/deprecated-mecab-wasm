@@ -386,7 +386,7 @@ cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
 Now all the files you need are inside `src/.libs`! From there, run:
 
 ```bash
-emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s BINARYEN_SCRIPTS="spidermonkify.py" --preload-file mecabrc --preload-file ipadic/
+emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/
 ```
 
 This should give you:
@@ -397,4 +397,6 @@ mecab.data
 mecab.js
 mecab.wast
 mecab.wast.mappedGlobals
+mecab.wasm
+mecab.wasm.mappedGlobals
 ```
