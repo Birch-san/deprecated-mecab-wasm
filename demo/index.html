@@ -33,7 +33,8 @@
   #output {
     width: 80%;
     height: 200px;
-    font-size: 1.2em;
+    font-family:monospace;
+    /*font-size: 1.2em;*/
     /*resize: both;*/
   }
   </style>
@@ -319,9 +320,11 @@ function yo() {
   mecab_do(args);
 
   var output = FS.readFile('output.txt', {encoding : "utf8"});
+  output = output.replace(/EOS\s*$/g, "");
 
-  console.log(output);
+  // console.log(output);
 // var newlines = (output.match(/\n/g) || []).length + 1;
+document.getElementById("output").value = output;
 // var newblock = d3.select('#mecab-output')
 //     .insert('div', ":first-child")
 //     .classed('mecab-output-block', true);
