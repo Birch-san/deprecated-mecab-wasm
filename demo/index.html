@@ -41,6 +41,10 @@
     /*font-size: 1.2em;*/
     /*resize: both;*/
   }
+  #deps {
+    width: 80%;
+    height: 50px;
+  }
   #error-box {
     width: 80%;
     height: 200px;
@@ -122,8 +126,8 @@
 </div>
 
 <div class="loader">
-  <label>Number of Dependencies in-flight:</label>
-  <input type="text" readonly id="deps">
+  <label>Dependencies in-flight:</label>
+  <textarea readonly id="deps"></textarea>
 </div>
 <div class="loader">
   <label>Percent loaded:</label>
@@ -175,7 +179,9 @@ function updateProgress() {
   var progress = numerator/denominator;
 
   // console.log(numerator, denominator, waiting.length, progress);
-  document.getElementById("deps").value = waiting.length;
+  document.getElementById("deps").value = waiting.reduce(function(accumulator, iterand) {
+    return accumulator + iterand.target + "\n";
+  }, "");
   document.getElementById("numerator").value = numerator || "?";
   document.getElementById("denominator").value = denominator || "?";
   document.getElementById("percent").value = (isNaN(progress) ? "Unknown" : Math.floor(progress*100))+"%";
@@ -196,7 +202,8 @@ From Andrew Newdigate, http://stackoverflow.com/a/10796951/5257399
 
       var progObject = {
         loaded: 0,
-        total: undefined
+        total: undefined,
+        target: url
       };
 
       waiting.push(progObject);
@@ -284,15 +291,12 @@ function printErr(text) {
   if (0) {              // XXX disabled for safety typeof dump == 'function') {
     dump(text + '\n');  // fast, straight to the real console
   } else {
-    console.log("yeah we got an error", text);
     if (text.indexOf("no native wasm support detected") !== -1) {
-      console.log("gon' hide the preloader");
       [].forEach.call(document.getElementsByClassName("loader"),
         function (el) {
           el.style.display = "none";
         });
     }
-    console.log("still alive");
     document.getElementById("error").hidden = false;
 
     var val = document.getElementById("error-box").value;
