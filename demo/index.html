@@ -88,10 +88,10 @@ document.getElementById('canvas').height = window.innerHeight * window.devicePix
 window.addEventListener('resize', softFullscreenResizeWebGLRenderTarget);
 
 function setupFiles() {
-  FS.createDataFile('/', 'input.txt',
+  Module.FS_createDataFile('/', 'input.txt',
                     Module['intArrayFromString']('Input goes here.'), true,
                     true);
-  FS.createDataFile('/', 'output.txt',
+  Module.FS_createDataFile('/', 'output.txt',
                     'Output can be placed here (-o output.txt)', true, true);
 }
 
@@ -103,7 +103,7 @@ function printer(text) {
   // text = text.replace(/>/g, "&gt;");
   // text = text.replace('\n', '<br>', 'g');
   // console.log("OUTPUT", text);
-  FS.writeFile('output.txt', text);
+  Module.FS_writeFile('output.txt', text);
   console.log(text);
 }
 function printErr(text) {
@@ -176,12 +176,12 @@ function yo() {
   var command = 'mecab ' + args;
 
   var text = "ようこそ";
-  FS.writeFile('input.txt', text);
-  FS.writeFile('output.txt', "");
+  Module.FS_writeFile('input.txt', text);
+  Module.FS_writeFile('output.txt', "");
 
   mecab_do(args);
 
-  var output = FS.readFile('output.txt', {encoding : "utf8"});
+  var output = Module.FS_readFile('output.txt', {encoding : "utf8"});
 
   console.log(output);
   // var newlines = (output.match(/\n/g) || []).length + 1;
