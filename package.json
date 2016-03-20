@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Birch-san/mecab-wasm#readme",
   "dependencies": {
+    "compression": "^1.6.1",
     "express": "^4.13.4"
   }
 }
