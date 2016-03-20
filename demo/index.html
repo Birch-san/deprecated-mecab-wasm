@@ -46,9 +46,23 @@
     text-decoration: underline;
     color: #0000EE;
   }
+  #footer {
+    font-size: 75%;
+  }
   </style>
 </head>
 <body>
+
+<h1>MeCab cross-compiled to WebAssembly</h1>
+<p>
+  <a href="http://taku910.github.io/mecab/">MeCab</a> is a Part-of-Speech and Morphological Analyzer for the Japanese language.
+</p>
+<p>
+  Originally written in C++, here I have used <a href="https://github.com/kripken/emscripten">Emscripten</a> and <a href="https://github.com/WebAssembly/binaryen">Binaryen</a> to compile it to WebAssembly. This webpage acquires and executes a .wasm binary.
+</p>
+<p>
+  WebAssembly is an experimental low-level programming language for (very new) web browsers.
+</p>
 
 <div class="hide-until-load">
   <form id="form">
@@ -368,6 +382,17 @@ document.getElementById("output").value = output;
 
 </script>
 
-
+<div id="footer">
+<p>MeCab &copy; Taku Kudo and NTT, released under the BSD license.</p>
+<p>IPADIC &copy; Nara Institute of Science and Technology, released under a BSD-like license.</p>
+<p>
+  MeCab ported to WebAssembly by Alex Birch of <a href="http://birchlabs.co.uk/">Birchlabs.co.uk</a>.
+  <br>
+  Code and development notes on <a href="https://github.com/Birch-san/mecab-wasm">GitHub</a>.
+</p>
+  <p>
+  MeCab port to WebAssembly is based heavily on the work of <a href="https://github.com/fasiha">Ahmed Fasih</a>; see <a href="https://github.com/fasiha/mecab-emscripten#mecab-on-the-web">MeCab ported to JavaScript</a>.
+  </p>
+</div>
 </body>
 </html>
