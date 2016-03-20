@@ -23,3 +23,5 @@ a.out.js
 a.out.asm.js
 a.out.wast
 a.out.wast.mappedGlobals
+a.out.wasm
+a.out.wasm.mappedGlobals

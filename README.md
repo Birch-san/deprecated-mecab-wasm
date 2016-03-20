@@ -292,7 +292,7 @@ Use Emscripten toolchain to invoke `./configure`.
 If at any point you goof up: erase all evidence with `git clean -fxd`.
 
 ```bash
-EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=\"spidermonkify.py\"'" CFLAGS="-O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=\"spidermonkify.py\"'"
+EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS=\"spidermonkify.py\"" CFLAGS="-O1 -s BINARYEN=1  -s BINARYEN_SCRIPTS=\"spidermonkify.py\""
 ```
 
 > **Note:**  
@@ -316,7 +316,13 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 
 `EMCONFIGURE_JS=1` ensures that we don't cheat on configure tests; enforces that we actually attempt compilation to js. This is worth doing, because we depend on the step `LLVM bitcode ⇒ asm.js` working correctly.
 
-The CXXFLAG and CFLAG `-s 'BINARYEN_SCRIPTS=\"spidermonkify.py\"'` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
+The CXXFLAG and CFLAG `-s BINARYEN_SCRIPTS=\"spidermonkify.py\"` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
+
+Okay, now `make`:
+
+```bash
+emmake make
+```
 
 There should now be some LLVM intermediate code in:
 
@@ -360,7 +366,7 @@ cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
 Now all the files you need are inside `src/.libs`! From there, run:
 
 ```bash
-emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/
+emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s BINARYEN_SCRIPTS="spidermonkify.py" --preload-file mecabrc --preload-file ipadic/
 ```
 
 This should give you:
