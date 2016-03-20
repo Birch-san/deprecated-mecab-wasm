@@ -9,6 +9,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>MeCab WebAssembly</title>
   <style type="text/css">
+  body {
+    font-family: sans-serif;
+  }
+
   label {
     display:block;
     font-weight: 700;
@@ -37,6 +41,11 @@
     /*font-size: 1.2em;*/
     /*resize: both;*/
   }
+  #examples-toggle {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0000EE;
+  }
   </style>
 </head>
 <body>
@@ -50,20 +59,24 @@
   <div>
     <label>Command-line args</label>
     <textarea id="args"></textarea>
-    <p id="examples-toggle">See example args</p>
-    <dl id="example-arguments" hidden>
-      <dt><tt>-O yomi</tt></dt>
-      <dd>Convert to onyomi</dd>
-      <dt><tt>-O wakati</tt></dt>
-      <dd>Put spaces between words</dd>
-      <dt><tt>-O chasen</tt></dt>
-      <dd>See full decomposition</dd>
-      <dt><tt>--node-format=%m[%f[7]] --eos-format=\n --unk-format=%m[]</tt></dt>
-      <dd><a href="https://ankiweb.net/shared/info/3918629684">Anki Japanese Support</a> formatting</dd>
-      <dt>Note to experienced users</dt>
-      <dd><tt>-r mecabrc -d ipadic/</tt> flags will be automatically added. The results are based on the IPADIC dictionary.
-      </dd>
-    </dl>
+    <p id="examples-toggle" onclick="toggleExample()">See example args</p>
+    <div id="example-arguments" hidden>
+      <p>For more details, see <a href="http://www.mwsoft.jp/programming/munou/mecab_command.html">
+guide</a> (in Japanese)</p>
+      <dl>
+        <dt><tt>-O yomi</tt></dt>
+        <dd>Convert to onyomi</dd>
+        <dt><tt>-O wakati</tt></dt>
+        <dd>Put spaces between words</dd>
+        <dt><tt>-O chasen</tt></dt>
+        <dd>See full decomposition</dd>
+        <dt><tt>--node-format=%m[%f[7]] --eos-format=\n --unk-format=%m[]</tt></dt>
+        <dd><a href="https://ankiweb.net/shared/info/3918629684">Anki Japanese Support</a> formatting</dd>
+        <dt>Note to experienced users</dt>
+        <dd><tt>-r mecabrc -d ipadic/</tt> flags will be automatically added. The results are based on the IPADIC dictionary.
+        </dd>
+      </dl>
+    </div>
   </div>
   <div>
     <label>Output</label>
@@ -89,6 +102,11 @@
 </div>
 
   <script type='text/javascript'>
+
+function toggleExample() {
+  var element = document.getElementById("example-arguments");
+  element.hidden = !element.hidden;
+}
 
 var waiting = [];
 
@@ -304,8 +322,9 @@ xhr.send(null);
 
 function yo() {
   // console.log('sup')
-  var args = "";
+  var args = document.getElementById("args").value;
   args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
+  // console.log(args);
 
   var command = 'mecab ' + args;
 
