@@ -266,14 +266,13 @@ xhr.onload = function() {
 xhr.send(null);
 
 function yo() {
-  setupFiles();
   var args = "";
   args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
 
   var command = 'mecab ' + args;
 
 
-  var text = "ようこそ";
+  var text = "hey";
   FS.writeFile('input.txt', text);
   FS.writeFile('output.txt', "");
 
