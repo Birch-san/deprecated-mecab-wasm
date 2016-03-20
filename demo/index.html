@@ -51,33 +51,36 @@
 <body>
 
 <div class="hide-until-load">
-  <div>
-    <label>Input</label>
-    <textarea id="input">今日は、世界。</textarea>
-    <input type="button" value="Tokenize" id="submit">
-  </div>
-  <div>
-    <label>Command-line args</label>
-    <textarea id="args"></textarea>
-    <p id="examples-toggle" onclick="toggleExample()">See example args</p>
-    <div id="example-arguments" hidden>
-      <p>For more details, see <a href="http://www.mwsoft.jp/programming/munou/mecab_command.html">
-guide</a> (in Japanese)</p>
-      <dl>
-        <dt><tt>-O yomi</tt></dt>
-        <dd>Convert to onyomi</dd>
-        <dt><tt>-O wakati</tt></dt>
-        <dd>Put spaces between words</dd>
-        <dt><tt>-O chasen</tt></dt>
-        <dd>See full decomposition</dd>
-        <dt><tt>--node-format=%m[%f[7]] --eos-format=\n --unk-format=%m[]</tt></dt>
-        <dd><a href="https://ankiweb.net/shared/info/3918629684">Anki Japanese Support</a> formatting</dd>
-        <dt>Note to experienced users</dt>
-        <dd><tt>-r mecabrc -d ipadic/</tt> flags will be automatically added. The results are based on the IPADIC dictionary.
-        </dd>
-      </dl>
+  <form id="form">
+    <div>
+      <label>Input</label>
+      <textarea id="input">今日は、世界。</textarea>
+      <input type="submit" value="Tokenize" id="submit">
     </div>
-  </div>
+    <div>
+      <label>Command-line args</label>
+      <textarea id="args"></textarea>
+      <p id="examples-toggle" onclick="toggleExample()">See example args</p>
+      <div id="example-arguments" hidden>
+        <p>For more details, see <a href="http://www.mwsoft.jp/programming/munou/mecab_command.html">
+  guide</a> (in Japanese)</p>
+        <dl>
+          <dt><tt>-O yomi</tt></dt>
+          <dd>Convert to onyomi</dd>
+          <dt><tt>-O wakati</tt></dt>
+          <dd>Put spaces between words</dd>
+          <dt><tt>-O chasen</tt></dt>
+          <dd>See full decomposition</dd>
+          <dt><tt>--node-format=%m[%f[7]] --eos-format=\n --unk-format=%m[]</tt></dt>
+          <dd><a href="https://ankiweb.net/shared/info/3918629684">Anki Japanese Support</a> formatting</dd>
+          <dt>Note to experienced users</dt>
+          <dd><tt>-r mecabrc -d ipadic/</tt> flags will be automatically added. The results are based on the IPADIC dictionary.
+          </dd>
+        </dl>
+      </div>
+    </div>
+
+  </form>
   <div>
     <label>Output</label>
     <textarea readonly id="output"></textarea>
@@ -102,6 +105,8 @@ guide</a> (in Japanese)</p>
 </div>
 
   <script type='text/javascript'>
+
+document.getElementById("form").addEventListener("submit", submit);
 
 function toggleExample() {
   var element = document.getElementById("example-arguments");
@@ -267,7 +272,7 @@ function begin() {
       el.className = "";
     });
 
-  yo();
+  go();
 }
 
 var canvas = document.getElementById("canvas");
@@ -320,7 +325,13 @@ xhr.onload = function() {
 };
 xhr.send(null);
 
-function yo() {
+function submit(event) {
+  event.preventDefault();
+  go();
+}
+
+function go() {
+
   // console.log('sup')
   var args = document.getElementById("args").value;
   args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
@@ -329,10 +340,11 @@ function yo() {
   var command = 'mecab ' + args;
 
 
-  var text = "今日は世界";
+  var text = document.getElementById("input").value;
   if (text.slice(-1) != "\n") {
     text += '\n';
   }
+  console.log(text);
   FS.writeFile('input.txt', text);
   FS.writeFile('output.txt', "");
 
