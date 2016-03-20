@@ -116,8 +116,11 @@ function printErr(text) {
     console.error(text);
   }
 }
+var mecab_do;
 function wrapFunctions() {
   mecab_do = Module.cwrap('mecab_do2', 'number', ['string']);
+  // console.log('wrapped');
+  yo();
 }
 
 var canvas = document.getElementById("canvas");
@@ -256,7 +259,7 @@ xhr.onload = function() {
     script.src = URL.createObjectURL(blob);
     script.onload = function() {
       URL.revokeObjectURL(script.src);
-      console.log(FS);
+      // console.log(FS);
     };
     document.body.appendChild(script);
   }
@@ -266,13 +269,17 @@ xhr.onload = function() {
 xhr.send(null);
 
 function yo() {
+  // console.log('sup')
   var args = "";
   args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
 
   var command = 'mecab ' + args;
 
 
-  var text = "hey";
+  var text = "今日は世界";
+  if (text.slice(-1) != "\n") {
+    text += '\n';
+  }
   FS.writeFile('input.txt', text);
   FS.writeFile('output.txt', "");
 
