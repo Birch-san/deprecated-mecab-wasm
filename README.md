@@ -212,18 +212,64 @@ Make
 cmake . && make
 ```
 
-May as well build `wasm.js` whilst you're in the area.
+_If you feel like it: you can build `wasm.js` whilst you're in the area._
 
 ```bash
 # Build wasm.js
 ./build.sh
 ```
 
+`wasm.js` is a shim that provides WebAssembly support via a JS interpreter, to browsers that don't yet have a full WebAssembly implementation.
+
 Now edit `~/.emscripten` so that `BINARYEN_ROOT` points to the Binaryen that you've compiled.
 
 ```bash
 # Edit that thing yourself
 echo "BINARYEN_ROOT='$HOME/git/binaryen'" >> ~/.emscripten
+```
+
+##### WebAssembly support for browsers
+
+Let's get the (WIP) native WebAssembly support for web browsers.
+
+###### Acquire source
+
+Get [mozilla-inbound](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Source_Code/Mercurial).
+
+```bash
+# if you have never installed Mercurial: try 'brew install hg'
+hg clone https://hg.mozilla.org/integration/mozilla-inbound/ inbound
+cd inbound
+```
+
+###### Build Spidermonkey
+
+Prerequisites required for building Mozilla projects [here](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Build_Instructions/Mac_OS_X_Prerequisites).
+
+```bash
+curl https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py > bootstrap.py && python bootstrap.py
+# Answer 1 when prompted
+```
+
+SpiderMonkey Build instructions [here](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Build_Documentation).
+
+```bash
+cd js/src
+# The bootstrapping that you ran prior to this should 'brew install autoconf213'
+autoconf213
+
+# This name should end with "_OPT.OBJ" to make the version control system ignore it.
+mkdir build_OPT.OBJ
+cd build_OPT.OBJ
+../configure
+make
+```
+
+Now populate your `~/.emscripten`'s `SPIDERMONKEY_ENGINE` with the path to the js shell that was built (`js/src/build_OPT.OBJ/dist/bin/js`):
+
+```bash
+# Edit that thing
+vi ~/.emscripten
 ```
 
 ##### Start compilin'
@@ -241,10 +287,12 @@ Get the Emscripten env variables into your shell:
 . $(dirname $(which emsdk))/emsdk_env.sh
 ```
 
-Use Emscripten toolchain to invoke `./configure`
+Use Emscripten toolchain to invoke `./configure`.
+
+If at any point you goof up: erase all evidence with `git clean -fxd`.
 
 ```bash
-EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1" CFLAGS="-O1 -s BINARYEN=1"
+EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++11 -O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=\"spidermonkify.py\"'" CFLAGS="-O1 -s BINARYEN=1  -s 'BINARYEN_SCRIPTS=\"spidermonkify.py\"'"
 ```
 
 > **Note:**  
@@ -253,7 +301,7 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 > You *need* to instruct it to use its WebAssembly backend,  
 > à la `EMCC_WASM_BACKEND=1`.  
 
-> When I _tried_ to follow this advice and provide `EMCC_WASM_BACKEND=1` — with a `BINARYEN_ROOT` entry in my `~/.emscripten` — emcc swore that my LLVM has no WebAssembly backend installed.  
+> When I _tried_ to follow this advice and provide `EMCC_WASM_BACKEND=1` — with a `BINARYEN_ROOT` entry in my `~/.emscripten` — `emcc` swore that my LLVM has no WebAssembly backend installed.  
 > I maintain that `emcc` is mistaken in its beliefs, and should reconsider its life choices.
 
 > In conclusion: my hand is forced.  
@@ -267,6 +315,8 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 > This angers me.
 
 `EMCONFIGURE_JS=1` ensures that we don't cheat on configure tests; enforces that we actually attempt compilation to js. This is worth doing, because we depend on the step `LLVM bitcode ⇒ asm.js` working correctly.
+
+The CXXFLAG and CFLAG `-s 'BINARYEN_SCRIPTS=\"spidermonkify.py\"'` ensures that Binaryen will [output a binary compatible with browsers](https://github.com/kripken/emscripten/wiki/WebAssembly).
 
 There should now be some LLVM intermediate code in:
 
@@ -310,7 +360,7 @@ cp -r $(dirname $(mecab -D | grep filename | sed 's/filename:\s*//')) .
 Now all the files you need are inside `src/.libs`! From there, run:
 
 ```bash
-emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" --preload-file mecabrc --preload-file ipadic/
+emcc -O1 mecab.bc libmecab.dylib -o mecab.js -s BINARYEN=1 -s EXPORTED_FUNCTIONS="['_mecab_do2']" -s 'BINARYEN_SCRIPTS="spidermonkify.py"' --preload-file mecabrc --preload-file ipadic/
 ```
 
 This should give you:
