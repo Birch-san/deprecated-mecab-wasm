@@ -10,6 +10,35 @@ Mecab is an awesome C++ library and CLI for tokenizing Japanese characters.
 
 Some pretty cool browser extensions could be built if MeCab were trivially embeddable into a webpage, at native speeds.
 
+## Demo
+
+Very new versions of Chrome have [experimental WebAssembly support](http://v8project.blogspot.co.uk/2016/03/experimental-support-for-webassembly.html).
+
+Get [Google Chrome Canary](https://www.google.co.uk/chrome/browser/canary.html).
+
+Enable the experimental WebAssembly flag:
+
+chrome://flags#enable-webassembly
+
+Restart Google Chrome Canary.
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Birch-san/mecab-wasm.git
+```
+
+Launch the simple Node webserver:
+
+```bash
+npm index.js
+```
+
+Browse to `http://localhost:3000/`.
+
+You will see what I have managed so far. Which might not be anything yet.
+
+
 ## Plan
 
 [Binaryen](https://github.com/WebAssembly/binaryen) provides a path:
