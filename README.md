@@ -44,15 +44,19 @@ This demo is now [hosted on Birchlabs](http://birchlabs.co.uk/wasm).
 
 ## Plan
 
-[Binaryen](https://github.com/WebAssembly/binaryen) provides a path:
-
-> C/C++ Source ⇒ WebAssembly LLVM backend ⇒ s2wasm ⇒ WebAssembly
-
-I assert that [fasiha's `Mecab-Emscripten`](https://github.com/fasiha/mecab-emscripten) did something very similar:
+I assert that [fasiha's `Mecab-Emscripten`](https://github.com/fasiha/mecab-emscripten) did something like this:
 
 > C/C++ Source ⇒ LLVM bitcode ⇒ asm.js
 
-We just need to take a slightly different direction.
+We can go in a similar direction.
+
+### Plan A
+
+I reckon this is the most direct route, and lets us try out the new LLVM WebAssembly backend:
+
+[Binaryen](https://github.com/WebAssembly/binaryen) provides a path:
+
+> C/C++ Source ⇒ WebAssembly LLVM backend ⇒ s2wasm ⇒ WebAssembly
 
 ### Plan B
 
@@ -328,23 +332,21 @@ EMCONFIGURE_JS=1 emconfigure ./configure --with-charset=utf8 CXXFLAGS="-std=c++1
 ```
 
 > **Note:**  
-> I am a bit confused.  
+> Plan A was to try out the `EMCC_WASM_BACKEND=1` env var.  
+> This did not work out.  
+
 > The [Binaryen README.md](https://github.com/WebAssembly/binaryen/blame/c8faff5ddbc7e93134763a845371b66bc2be56a4/README.md#L114-L137) suggests that if you use "normal" Emscripten (i.e. Emscripten with its own `fastcomp` fork of LLVM):  
 > You *need* to instruct it to use its WebAssembly backend,  
-> à la `EMCC_WASM_BACKEND=1`.  
+> à la `EMCC_WASM_BACKEND=1`.
 
-> When I _tried_ to follow this advice and provide `EMCC_WASM_BACKEND=1` — with a `BINARYEN_ROOT` entry in my `~/.emscripten` — `emcc` swore that my LLVM has no WebAssembly backend installed.  
-> I maintain that `emcc` is mistaken in its beliefs, and should reconsider its life choices.
+> When I tried this: `emcc` insisted that my LLVM had no WebAssembly backend installed.  
+> I did try various values for `BINARYEN_ROOT` in my `~/.emscripten`, but these did not help.
 
-> In conclusion: my hand is forced.  
-> I have intentionally omitted the `EMCC_WASM_BACKEND=1` env var.  
-
-> I assert that this means the compilation will take my "Plan B" route of:  
-> `C/C++ Source ⇒ LLVM bitcode ⇒ asm.js ⇒ asm2wasm`  
-> Rather than my "Plan A" route of:  
+> "Plan A" was:  
 > `C/C++ Source ⇒ WebAssembly LLVM backend ⇒ s2wasm ⇒ WebAssembly`.  
 
-> This angers me.
+> We will be resorting instead to "Plan B" now:  
+> `C/C++ Source ⇒ LLVM bitcode ⇒ asm.js ⇒ asm2wasm`  
 
 `EMCONFIGURE_JS=1` ensures that we don't cheat on configure tests; enforces that we actually attempt compilation to js. This is worth doing, because we depend on the step `LLVM bitcode ⇒ asm.js` working correctly.
 
