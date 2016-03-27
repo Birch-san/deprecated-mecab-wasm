@@ -88,7 +88,7 @@
   <form id="form">
     <div>
       <label>Input</label>
-      <textarea id="input">今日は、世界。</textarea>
+      <textarea id="input">すもももももももものうち</textarea>
       <input type="submit" value="Tokenize" id="submit">
     </div>
     <div>
@@ -283,8 +283,10 @@ function printer(text) {
   // text = text.replace(/>/g, "&gt;");
   // text = text.replace('\n', '<br>', 'g');
   // console.log("OUTPUT", text);
-  FS.writeFile('output.txt', text);
-  console.log(text);
+  // FS.writeFile('output.txt', text);
+
+  document.getElementById("output").value += text + '\n';
+  // console.log(text);
 }
 function printErr(text) {
   text = Array.prototype.slice.call(arguments).join(' ');
@@ -334,7 +336,7 @@ var Module = {
   noInitialRun : false,
   print : printer,
   printErr : printErr,
-  errorhandler: function(err, url) {
+  errorhandler: function(err, url, line) {
     // arguments: err, url, line. This function must return 'true' if the error is handled, otherwise 'false'
     console.error(err);
     return false;
@@ -366,7 +368,6 @@ xhr.onload = function() {
     script.src = URL.createObjectURL(blob);
     script.onload = function() {
       URL.revokeObjectURL(script.src);
-      // console.log(FS);
     };
     document.body.appendChild(script);
   }
@@ -381,14 +382,12 @@ function submit(event) {
 }
 
 function go() {
-
-  // console.log('sup')
   var args = document.getElementById("args").value;
   args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
-  // console.log(args);
 
   var command = 'mecab ' + args;
 
+  document.getElementById("output").value = "";
 
   var text = document.getElementById("input").value;
   if (text.slice(-1) != "\n") {
@@ -401,19 +400,9 @@ function go() {
   mecab_do(args);
 
   var output = FS.readFile('output.txt', {encoding : "utf8"});
-  output = output.replace(/EOS\s*$/g, "");
-
+  
+  document.getElementById("output").value += output;
   // console.log(output);
-// var newlines = (output.match(/\n/g) || []).length + 1;
-document.getElementById("output").value = output;
-// var newblock = d3.select('#mecab-output')
-//     .insert('div', ":first-child")
-//     .classed('mecab-output-block', true);
-// newblock.append('h1').text('Result');
-// newblock.append('p').html("Equivalent command: <tt>" + command + "</tt>");
-// newblock.append('textarea')
-//     .text(output)
-//     .style({height : (1.35*newlines)+"em"});
 }
 
 </script>
