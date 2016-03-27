@@ -361,21 +361,24 @@ var Module = {
   // canvas: canvas,
   dataUrl: "mecab.data",
   // codeUrl: "mecab.js",
-  memUrl: "mecab.html.mem",
-  compatibilitycheck: function() {
-    if (typeof Wasm !== 'object') (alert("You need a browser which supports WebAssembly to run this content. See the WebAssembly demo page for instructions."), window.history.back());
-    hasWebGL ? mobile ? confirm("Please note that Unity WebGL is not currently supported on mobiles. Press Ok if you wish to continue anyway.") || window.history.back() : -1 == browser.indexOf("Firefox") && -1 == browser.indexOf("Chrome") && -1 == browser.indexOf("Safari") && (confirm("Please note that your browser is not currently supported for this Unity WebGL content. Try installing Firefox, or press Ok if you wish to continue anyway.") || window.history.back()) : (alert("You need a browser which supports WebGL to run this content. Try installing Firefox."), window.history.back())
-  },
+  memUrl: "mecab.html.mem"
 };
 
-var xhr = new XMLHttpRequest();
-xhr.open('GET', 'mecab.wasm', true);
-xhr.responseType = 'arraybuffer';
-xhr.onload = function() {
-  Module.wasmBinary = xhr.response;
+function acquireRuntime(callback) {
+  if (false && typeof Wasm === 'object') {
+    callback();
+  } else {
+    fetchRuntime(function() {
+      loadWebAssembly('mecab.wasm');
+    });
+  }
+}
 
+acquireRuntime(fetchExecutable);
+
+function fetchRuntime(callback) {
   var codeXHR = new XMLHttpRequest();
-  codeXHR.open('GET', 'mecab.min.js', true);
+  codeXHR.open('GET', 'load-wasm.js', true);
   codeXHR.onload = function() {
     var code = codeXHR.responseText;
     var blob = new Blob([code], {type: 'text/javascript'});
@@ -385,13 +388,41 @@ xhr.onload = function() {
     script.src = URL.createObjectURL(blob);
     script.onload = function() {
       URL.revokeObjectURL(script.src);
+      fetchExecutable();
     };
     document.body.appendChild(script);
   }
   codeXHR.send(null);
+}
 
-};
-xhr.send(null);
+function fetchExecutable() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'mecab.wasm', true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function() {
+    Module.wasmBinary = xhr.response;
+
+    var codeXHR = new XMLHttpRequest();
+    codeXHR.open('GET', 'mecab.min.js', true);
+    codeXHR.onload = function() {
+      var code = codeXHR.responseText;
+      var blob = new Blob([code], {type: 'text/javascript'});
+      codeXHR = null;
+      var src = URL.createObjectURL(blob);
+      var script = document.createElement('script');
+      script.src = URL.createObjectURL(blob);
+      script.onload = function() {
+        URL.revokeObjectURL(script.src);
+      };
+      document.body.appendChild(script);
+    }
+    codeXHR.send(null);
+
+  };
+  xhr.send(null);
+
+}
+
 
 function submit(event) {
   event.preventDefault();
