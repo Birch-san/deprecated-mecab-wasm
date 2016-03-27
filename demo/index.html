@@ -25,11 +25,27 @@
     height: 200px;
     font-size: 1.2em;
   }
-  #args {
+  .args-holder {
     width: 80%;
-    height: 1.2em;
-    font-size: 1.2em;
+  }
+  .args {
     font-family:monospace;
+    margin-right: 0px;
+    margin-left: 0px;
+    /*font-size: 1em;*/
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    /*height:1em;*/
+  }
+  #args {
+    width: 10em;
+  }
+  #cli-start {
+    width: 5em;
+  }
+  #cli-end {
+    width: calc(100% - (5em + 12em));
   }
   #submit {
     display: inline-block;
@@ -92,8 +108,12 @@
       <input type="submit" value="Tokenize" id="submit">
     </div>
     <div>
-      <label>Command-line args</label>
-      <textarea id="args"></textarea>
+      <label>Command-line invocation</label>
+      <div class="args-holder">
+        <input type="text" readonly id="cli-start" class="args">
+        <input type="text" id="args" class="args" placeholder="Your args here">
+        <input type="text" readonly id="cli-end" class="args">
+      </div>
       <p id="examples-toggle" onclick="toggleExample()">See example args</p>
       <div id="example-arguments" hidden>
         <p>For more details, see <a href="http://www.mwsoft.jp/programming/munou/mecab_command.html">
@@ -107,9 +127,6 @@
           <dd>See full decomposition</dd>
           <dt><tt>--node-format=%m[%f[7]] --eos-format=\n --unk-format=%m[]</tt></dt>
           <dd><a href="https://ankiweb.net/shared/info/3918629684">Anki Japanese Support</a> formatting</dd>
-          <dt>Note to experienced users</dt>
-          <dd><tt>-r mecabrc -d ipadic/</tt> flags will be automatically added. The results are based on the IPADIC dictionary.
-          </dd>
         </dl>
       </div>
     </div>
@@ -381,11 +398,21 @@ function submit(event) {
   go();
 }
 
+function initform() {
+  document.getElementById("cli-start").value = cliStart;
+  document.getElementById("cli-end").value = cliEnd;
+}
+
+var cliStart = 'mecab ';
+var cliEnd = ' -r mecabrc -d ipadic/ -o output.txt input.txt';
+
+initform();
+
 function go() {
   var args = document.getElementById("args").value;
-  args += " -r mecabrc -d ipadic/ -o output.txt input.txt";
+  args += cliEnd;
 
-  var command = 'mecab ' + args;
+  var command = cliStart + args;
 
   document.getElementById("output").value = "";
 
